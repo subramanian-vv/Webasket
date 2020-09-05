@@ -22,11 +22,11 @@ router.get('/signup', forwardAuthenticated, function(req, res) {
 
 //Signup handle
 router.post('/signup', function(req, res) {
-    const { name, email, password, password2 } = req.body;
+    const { name, email, password, password2, role } = req.body;
     let errors = [];
 
     //Check required fields
-    if(!name || !email || !password || !password2) {
+    if(!name || !email || !password || !password2 || !role) {
         errors.push({ msg: 'Please fill in all the fields' });
     }
 
@@ -46,7 +46,8 @@ router.post('/signup', function(req, res) {
             name,
             email,
             password,
-            password2
+            password2,
+            role
         });
     } else {
         //Validation passed
@@ -60,13 +61,15 @@ router.post('/signup', function(req, res) {
                         name,
                         email,
                         password,
-                        password2
+                        password2,
+                        role
                     });
                 } else {
                     const newUser = new User ({
                         name,
                         email,
-                        password
+                        password,
+                        role
                     });
 
                     //Hash password
@@ -100,6 +103,21 @@ router.post('/login', function(req, res, next) {
         failureRedirect: '/login',
         failureFlash: true
     })(req, res, next);
+});
+
+//Logout handle
+router.get('/logout', function(req, res) {
+    req.logout();
+    req.flash('success_msg', 'You are logged out!');
+    res.redirect('/login');
+});
+
+//Temp dashboard
+router.get('/user/dashboard', ensureAuthenticated, function(req, res) {
+    res.render('dashboard', {
+        name: req.user.name,
+        role: req.user.role
+    });
 });
 
 module.exports = router;
