@@ -3,18 +3,20 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 
+const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth');
+
 //User model
 const User = require('../models/User');
 
-router.get('/', function(req, res) {
+router.get('/', forwardAuthenticated, function(req, res) {
     res.redirect('/login');
 });
 
-router.get('/login', function(req, res) {
+router.get('/login', forwardAuthenticated, function(req, res) {
     res.render('login');
 });
 
-router.get('/signup', function(req, res) {
+router.get('/signup', forwardAuthenticated, function(req, res) {
     res.render('signup');
 });
 
