@@ -10,8 +10,13 @@ const app = express();
 //Passport config
 require('./config/passport')(passport);
 
+//Dotenv config
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
 //DB config
-const db = "mongodb+srv://koyilnet:KoyilNet123@cluster0-gsth2.mongodb.net/shopping_site?retryWrites=true&w=majority";
+const db = process.env.MONGO_URI;
 
 mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
     .then(function() {
@@ -30,7 +35,7 @@ app.use(express.urlencoded({ extended: false }));
 
 //Express session middleware
 app.use(session({
-    secret: 'secret',
+    secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
 }));
