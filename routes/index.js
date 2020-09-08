@@ -112,12 +112,4 @@ router.get('/logout', function(req, res) {
     res.redirect('/login');
 });
 
-//Temp dashboard
-router.get('/user/dashboard', ensureAuthenticated, function(req, res) {
-    res.render('dashboard', {
-        name: req.user.name,
-        role: req.user.role
-    });
-});
-
 module.exports = router;
