@@ -9,7 +9,7 @@
       <% } %>
       
       <% products.forEach(function (product) { %>
-      
+        <% if(purchases.indexOf(product.id) != -1) { %>
           <div class="card  mt-4 border-dark">
             <h3 class="card-header text-center">
               <%= product.itemName %>
@@ -20,14 +20,12 @@
                 <div class="card-title mb-4"> Quantity: <strong> <%= product.itemQty %> </strong> </div>
                 <div class="card-title mb-4"> Category: <strong> <%= product.itemCategory %> </strong> </div>
                 <hr>
-                <form action="/user/cart/<%= product.id %>" method="POST">
-                    <button type="submit" class="btn"> <i class="fa fa-shopping-cart" style="font-size:36px"></i> </button>
-                </form>
               </div>
               <div class="card-footer mb-2"> Created on : <strong> <%= product.createdDate.toLocaleDateString() %> </strong>
                 <div class="float-right"> Created by: <strong> <%= product.name %> </strong> </div>
               </div>
       
           </div>
+          <% } %>
       
       <% }) %>
