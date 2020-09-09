@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { ensureAuthenticated } = require('../config/auth');
+const { ensureAuthenticated, sellerAuthenticated } = require('../config/auth');
 
 //User model
 const User = require('../models/User');
@@ -11,13 +11,15 @@ const Product = require('../models/Product');
 
 //Temp dashboard
 router.get('/dashboard', ensureAuthenticated, async function(req, res) {
-    const products = await Product.find();
+    let products = await Product.find().sort({ createdDate: 'desc' });
     const role = req.user.role;
     if(role == 'buyer') {
         res.render('buyer-dash', {
             name: req.user.name,
+            products: products
         });
     } else if(role == 'seller') {
+        products = await Product.find({ email: req.user.email }).sort({ createdDate: 'desc' });;
         res.render('seller-dash', {
             name: req.user.name,
             products: products
@@ -25,7 +27,7 @@ router.get('/dashboard', ensureAuthenticated, async function(req, res) {
     }
 });
 
-router.get('/add', ensureAuthenticated, function(req, res) {
+router.get('/add', ensureAuthenticated, sellerAuthenticated, function(req, res) {
     res.render('addproduct', { product: new Product() });
 });
 
@@ -73,5 +75,21 @@ router.post('/dashboard', function(req, res) {
             });
         });
 });
+
+router.post('/:id', async function(req, res) {
+    let product = await Product.findById(req.params.id);
+    if(product.itemQty > 0) {
+        console.log(product);
+        product.itemQty--;
+        product = await product.save();
+        console.log("Doneeee");
+        console.log(product);
+        req.flash('success_msg', "Product purchased");
+        res.redirect('/user/dashboard');
+    } else {
+        req.flash('error_msg', "Product not in stock");
+        res.redirect('/user/dashboard');
+    }
+})
 
 module.exports = router;

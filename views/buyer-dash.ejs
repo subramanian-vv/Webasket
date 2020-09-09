@@ -3,3 +3,31 @@
 
 <h1 class="mb-3 mt-4 text-center">Welcome to your feed, <%= name %> !</h1> <hr>
     <p> Buyer </p>
+
+    <% if(products.length == 0) { %>
+        <h4 class="mt-4 text-center"> Nothing to show in feed! </h4>
+      <% } %>
+      
+      <% products.forEach(function (product) { %>
+      
+          <div class="card  mt-4 border-dark">
+            <h3 class="card-header text-center">
+              <%= product.itemName %>
+            </h3>
+              <div class="card-body" style="background-color: aliceblue;">
+                <div class="card-title mb-4"> Description: <strong> <%= product.itemDesc %> </strong> </div>
+                <div class="card-title mb-4"> Price: <strong> <%= product.itemPrice %> </strong> </div>
+                <div class="card-title mb-4"> Quantity: <strong> <%= product.itemQty %> </strong> </div>
+                <div class="card-title mb-4"> Category: <strong> <%= product.itemCategory %> </strong> </div>
+                <hr>
+                <form action="/user/<%= product.id %>" method="POST">
+                    <button type="submit"> Test </button>
+                </form>
+              </div>
+              <div class="card-footer mb-2"> Created on : <strong> <%= product.createdDate.toLocaleDateString() %> </strong>
+                <div class="float-right"> Created by: <strong> <%= product.name %> </strong> </div>
+              </div>
+      
+          </div>
+      
+      <% }) %>

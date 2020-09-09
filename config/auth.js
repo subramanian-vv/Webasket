@@ -15,5 +15,20 @@ module.exports = {
         }
         req.flash('error_msg', 'You are already logged in!');
         res.redirect('/user/dashboard');
+    }, 
+
+    //Ensures buyers don't access the seller-specific pages
+    sellerAuthenticated: function(req, res, next) {
+        if(req.user.role == 'seller') {
+            return next();
+        }
+        res.redirect('/user/dashboard');
+    },
+
+    buyerAuthenticated: function(req, res, next) {
+        if(req.user.role == 'buyer') {
+            return next();
+        }
+        res.redirect('/user/dashboard');
     }
 };
