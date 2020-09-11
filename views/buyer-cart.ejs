@@ -4,34 +4,27 @@
 <h1 class="mb-3 mt-4 text-center">Welcome to your feed, <%= name %> !</h1> <hr>
     <p> Buyer </p>
 
-    <% if(products.length == 0) { %>
+    <% if(cart.length == 0) { %>
         <h4 class="mt-4 text-center"> Nothing to show in feed! </h4>
       <% } %>
       
-      <% products.forEach(function (product) { %>
-        <% if(cart.indexOf(product.id) != -1) { %>
+      <% cart.forEach(function (cartObject) { %>
+        
           <div class="card  mt-4 border-dark">
             <h3 class="card-header text-center">
-              <%= product.itemName %>
+              <%= cartObject.name %>
             </h3>
               <div class="card-body" style="background-color: aliceblue;">
-                <div class="card-title mb-4"> Description: <strong> <%= product.itemDesc %> </strong> </div>
-                <div class="card-title mb-4"> Price: <strong> <%= product.itemPrice %> </strong> </div>
-                <div class="card-title mb-4"> Quantity: <strong> <%= product.itemQty %> </strong> </div>
-                <div class="card-title mb-4"> Category: <strong> <%= product.itemCategory %> </strong> </div>
+                <div class="card-title mb-4"> Quantity: <strong> <%= cartObject.qty %> </strong> </div>
+                <div class="card-title mb-4"> Price: <strong> <%= cartObject.price %> </strong> </div>
+                
+                <div class="card-title mb-4"> Category: <strong> <%= cartObject.category %> </strong> </div>
                 <hr>
-                <form action="/user/cart/<%= product.id %>" method="POST">
-                    <button type="submit" class="btn"> <i class="fa fa-shopping-cart" style="font-size:36px"></i> </button>
-                </form>
-                <form action="/user/purchases/<%= product.id %>" method="POST">
-                    <button type="submit" class="btn btn-dark btn-lg"> Purchase </button>
-                </form>
+                
               </div>
-              <div class="card-footer mb-2"> Created on : <strong> <%= product.createdDate.toLocaleDateString() %> </strong>
-                <div class="float-right"> Created by: <strong> <%= product.name %> </strong> </div>
-              </div>
-      
           </div>
-          <% } %>
-      
+          
       <% }) %>
+      <form action="/user/purchases" method="GET">
+        <button type="submit" class="btn btn-dark btn-lg"> Purchase </button>
+      </form>

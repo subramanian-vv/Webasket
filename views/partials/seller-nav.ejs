@@ -1,3 +1,13 @@
+<style>
+    .active {
+        background: maroon;
+    }
+
+    .nav-link {
+        color: wheat !important;
+    }
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="/user/dashboard"> 
         <h1> SHOPPING SITE </h1>
@@ -9,10 +19,10 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/user/add"> Add Product </a>
+            <li class="nav-item">
+                <a class="nav-link" id="add-nav" href="/user/add"> Add Product </a>
             </li>
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="/user/history"> Sales History </a>
             </li>
         </ul>

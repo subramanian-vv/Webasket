@@ -5,6 +5,7 @@ const flash = require('express-flash');
 const session = require('express-session');
 const passport = require('passport');
 
+
 const app = express();
 
 //Passport config
@@ -32,6 +33,7 @@ app.set('view engine','ejs');
 
 //Body Parser
 app.use(express.urlencoded({ extended: false }));
+
 
 //Express session middleware
 app.use(session({

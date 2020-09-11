@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
         required: true,
     },
     cart: {
-        type: Array,
+        type: Array
     },
     purchases: {
         type: Array

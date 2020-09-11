@@ -21,6 +21,14 @@
                 <div class="card-title mb-4"> Category: <strong> <%= product.itemCategory %> </strong> </div>
                 <hr>
                 <form action="/user/cart/<%= product.id %>" method="POST">
+                    <input 
+                      name="quantity"
+                      id="quantity"
+                      type="number"
+                      value="1"
+                      placeholder="Enter quantity"
+                      required
+                      />
                     <button type="submit" class="btn"> <i class="fa fa-shopping-cart" style="font-size:36px"></i> </button>
                 </form>
               </div>
