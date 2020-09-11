@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const flash = require('express-flash');
 const session = require('express-session');
 const passport = require('passport');
-
+const methodOverride = require('method-override');
 
 const app = express();
 
@@ -34,6 +34,8 @@ app.set('view engine','ejs');
 //Body Parser
 app.use(express.urlencoded({ extended: false }));
 
+//Method override for PUT and DELETE
+app.use(methodOverride('_method'));
 
 //Express session middleware
 app.use(session({

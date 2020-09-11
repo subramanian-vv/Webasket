@@ -10,11 +10,15 @@
       
       <% products.forEach(function (product) { %>
       
-          <div class="card  mt-4 border-dark">
+          <div class="card mt-4 border-dark">
             <h3 class="card-header text-center">
               <%= product.itemName %>
             </h3>
               <div class="card-body" style="background-color: aliceblue;">
+                <div class="card-title mb-4"> 
+                  <img src="data:image/<%= product.image.contentType %>;base64, 
+					                  <%= product.image.data.toString('base64') %>" width="200" height="200" alt="Image">   
+                </div>
                 <div class="card-title mb-4"> Description: <strong> <%= product.itemDesc %> </strong> </div>
                 <div class="card-title mb-4"> Price: <strong> <%= product.itemPrice %> </strong> </div>
                 <div class="card-title mb-4"> Quantity: <strong> <%= product.itemQty %> </strong> </div>

@@ -288,4 +288,41 @@ router.get('/purchases', async function(req, res) {
     // }
 });
 
+//Remove product
+router.delete('/:id', async function(req, res) {
+    await Product.findByIdAndDelete(req.params.id);
+    req.flash('error_msg', 'The product has been removed');
+    res.redirect('/user/dashboard');
+});
+
+//Edit product
+router.get('/edit/:id', async function(req, res) {
+    const product = await Product.findById(req.params.id);
+    res.render('editproduct', {
+        itemQty: req.body.itemQty,
+        itemPrice: req.body.itemPrice,
+        product: product
+    });
+});
+
+router.put('/:id', async function(req, res) {
+    let product = await Product.findById(req.params.id);
+    product.itemQty = req.body.itemQty;
+    product.itemPrice = req.body.itemPrice;
+    try {
+        product = await product.save();
+        req.flash('success_msg', 'The product details has been updated successfully');
+        res.redirect('/user/dashboard');
+    }
+    catch (err) {
+        console.log(err);
+        req.flash('error_msg', 'Please fill all the details!');
+        res.render('editproduct', {
+            itemQty: req.body.itemQty,
+            itemPrice: req.body.itemPrice,
+            product: product
+        });
+    }
+});
+
 module.exports = router;
