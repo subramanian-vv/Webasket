@@ -6,25 +6,28 @@
 
     <% if(cart.length == 0) { %>
         <h4 class="mt-4 text-center"> Nothing to show in feed! </h4>
-      <% } %>
+      <% } else { %>
       
-      <% cart.forEach(function (cartObject) { %>
-        
-          <div class="card  mt-4 border-dark">
-            <h3 class="card-header text-center">
-              <%= cartObject.name %>
-            </h3>
-              <div class="card-body" style="background-color: aliceblue;">
-                <div class="card-title mb-4"> Quantity: <strong> <%= cartObject.qty %> </strong> </div>
-                <div class="card-title mb-4"> Price: <strong> <%= cartObject.price %> </strong> </div>
-                
-                <div class="card-title mb-4"> Category: <strong> <%= cartObject.category %> </strong> </div>
-                <hr>
-                
-              </div>
-          </div>
+        <% cart.forEach(function (cartObject) { %>
           
-      <% }) %>
-      <form action="/user/purchases" method="GET">
-        <button type="submit" class="btn btn-dark btn-lg"> Purchase </button>
-      </form>
+            <div class="card  mt-4 border-dark">
+              <h3 class="card-header text-center">
+                <%= cartObject.name %>
+              </h3>
+                <div class="card-body" style="background-color: aliceblue;">
+                  <div class="card-title mb-4"> Quantity: <strong> <%= cartObject.qty %> </strong> </div>
+                  <div class="card-title mb-4"> Price: <strong> <%= cartObject.price %> </strong> </div>
+                  
+                  <div class="card-title mb-4"> Category: <strong> <%= cartObject.category %> </strong> </div>
+                  <hr>
+                  <form action="/user/remove/<%= cartObject.id %>" method="POST">
+                    <button type="submit" class="btn btn-dark btn-lg"> Remove </button>
+                  </form>
+                </div>
+            </div>
+            
+        <% }) %>
+        <form action="/user/purchases" method="POST">
+          <button type="submit" class="btn btn-dark btn-lg"> Purchase </button>
+        </form>
+      <% } %>

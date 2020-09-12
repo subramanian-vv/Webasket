@@ -13,19 +13,8 @@ const User = require('../models/User');
 //Product model
 const Product = require('../models/Product');
 
-// var storage = multer.diskStorage({ 
-// 	destination: (req, file, cb) => { 
-// 		cb(null, './routes/uploads') 
-// 	}, 
-// 	filename: (req, file, cb) => { 
-// 		cb(null, file.fieldname + '-' + Date.now()) 
-// 	} 
-// }); 
-
-// var upload = multer({ storage: storage }); 
-
 const storage = multer.diskStorage({
-    destination: './routes/uploads',
+    destination: './public/uploads',
     filename: function(req, file, callback) {
         callback(null, file.fieldname + '-' + Date.now() + 
         path.extname(file.originalname));
@@ -38,7 +27,7 @@ const upload = multer({
     fileFilter: function(req, file, callback) {
         checkFileType(file, callback);
     }
-})
+});
 
 //Check File Type
 function checkFileType(file, callback, req, res) {
@@ -79,25 +68,6 @@ router.get('/add', ensureAuthenticated, sellerAuthenticated, function(req, res) 
 });
 
 router.post('/dashboard', upload.single('image'), function(req, res) {
-    // const { itemName, itemDesc, itemCategory, itemQty, itemPrice } = req.body;
-    // const email = req.user.email;
-    // const name = req.user.name;
-    // const image = {
-    //         data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)), 
-	// 		contentType: 'image/png'
-    // }
-
-    // if(!itemName || !itemDesc || !itemCategory || !itemQty || !itemPrice) {
-    //     req.flash('error_msg', 'Please fill all the fields');
-    //     res.render('addproduct', {
-    //         itemName: req.body.itemName,
-    //         itemDesc: req.body.itemDesc,
-    //         itemCategory: req.body.itemCategory,
-    //         itemQty: req.body.itemQty,
-    //         itemPrice: req.body.itemPrice
-    //     });
-    // }
-
     var newProduct = { 
 		name: req.user.name, 
         email: req.user.email, 
@@ -107,41 +77,10 @@ router.post('/dashboard', upload.single('image'), function(req, res) {
         itemQty: req.body.itemQty,
         itemPrice: req.body.itemPrice,
 		image: { 
-			data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)), 
+			data: fs.readFileSync(path.join('./public/uploads/' + req.file.filename)), 
 			contentType: 'image/png'
 		} 
 	} 
-
-    // const newProduct = new Product({
-    //     name,
-    //     email,
-    //     itemName,
-    //     itemDesc,
-    //     itemCategory,
-    //     itemQty,
-    //     itemPrice,
-    //     image
-    // });
-
-    // newProduct.save()
-    //     .then(function(product) {
-    //         req.flash('success_msg', 'Product added successfully!');
-    //         res.redirect('/user/dashboard');
-    //         console.log(newProduct);
-    //     })
-    //     .catch(function(err) {
-    //         console.log("Errorrrrrrrrrr");
-    //         console.log(err);
-    //         req.flash('error_msg', 'Please fill all the fields');
-    //         res.render('/user/add', {
-    //             itemName,
-    //             itemDesc,
-    //             itemCategory,
-    //             itemQty,
-    //             itemPrice,
-    //             image
-    //         });
-    //     });
 
     Product.create(newProduct, function(err) {
         if(err) {
@@ -158,26 +97,23 @@ router.post('/dashboard', upload.single('image'), function(req, res) {
         } else {
             req.flash('success_msg', 'Product added successfully!');
             res.redirect('/user/dashboard');
-            console.log(newProduct);
         }
     })
 });
 
-// router.post('/:id', async function(req, res) {
-//     let product = await Product.findById(req.params.id);
-//     if(product.itemQty > 0) {
-//         console.log(product);
-//         product.itemQty--;
-//         product = await product.save();
-//         console.log("Doneeee");
-//         console.log(product);
-//         req.flash('success_msg', "Product purchased");
-//         res.redirect('/user/dashboard');
-//     } else {
-//         req.flash('error_msg', "Product not in stock");
-//         res.redirect('/user/dashboard');
-//     }
-// });
+router.post('/remove/:id', async function(req, res) {
+    let product = await Product.findById(req.params.id);
+    let user = req.user;
+    for(let i = 0; i < user.cart.length; i++) {
+        if(user.cart[i].id == product.id) {
+            user.cart.splice(i, 1);
+            user = await user.save();
+            req.flash('success_msg', 'Product removed from the cart');
+            res.redirect('/user/dashboard');
+            break;
+        }
+    }
+});
 
 router.get('/cart', ensureAuthenticated, buyerAuthenticated, async function(req, res) {
     const products = await Product.find().sort({ createdDate: 'desc' });
@@ -198,7 +134,8 @@ router.post('/cart/:id', async function(req, res) {
         name: product.itemName,
         category: product.itemCategory,
         qty: quantity,
-        price: quantity*product.itemPrice
+        price: quantity*product.itemPrice,
+        eventDate: new Date().toLocaleDateString()
     };
     
     let itemFlag = true;
@@ -218,74 +155,72 @@ router.post('/cart/:id', async function(req, res) {
             req.flash('error_msg', "Product quantity is not a valid integer greater than zero");
             res.redirect('/user/dashboard');
         } else {
-            console.log(quantity);
             user.cart.push(cartObject);
             user = await user.save();
-            console.log("Doneeee");
-            console.log(req.user.cart);
             req.flash('success_msg', "Product added to cart successfully!");
             res.redirect('/user/cart');
         }
     }
 });
 
-// router.get('/purchases', ensureAuthenticated, buyerAuthenticated, function(req, res) {
-//     // const products = await Product.find().sort({ createdDate: 'desc' });
-//     res.render('buyer-purchases', {
-//         name: req.user.name,
-//         purchases: req.user.purchases,
-        
-//     });
-// });
-
-router.get('/purchases', async function(req, res) {
-    let products = await Product.find();
-    let user = req.user;
-    // console.log(user);
-    // console.log(products);
-    user.cart.forEach(function(cartElement) {
-        products.forEach(async function(product) {
-            // console.log("Product id " + product.id);
-            // console.log("Cart id " + cartElement.id);
-            console.log("First");
-            console.log(cartElement.name);
-            console.log(product.itemName);
-            if(product.itemName == cartElement.name) {
-                let tempProduct = await Product.findById(product.id);
-                user.purchases.push(cartElement);
-                user.cart.splice(cartElement, 1);
-                product.itemQty = product.itemQty - cartElement.qty;
-                console.log("Second");
-                tempProduct = await tempProduct.save();
-            }
-        });
-    });
-
-    user = await user.save();
-    req.flash('success_msg', "Product purchased successfully!");
-    // res.redirect('/user/purchases');
+router.get('/purchases', ensureAuthenticated, buyerAuthenticated, function(req, res) {
     res.render('buyer-purchases', {
         name: req.user.name,
         purchases: req.user.purchases,
-        
     });
+});
 
-    // if(product.itemQty > 0) {
-    //     // console.log(product);
-    //     // console.log(cartId);
-    //     user.purchases.push(product.id);
-    //     user.cart.splice(cartId, 1);
-    //     product.itemQty--;
-    //     user = await user.save();
-    //     product = await product.save();
-    //     // console.log("Doneeee");
-    //     // console.log(req.user.cart);
-    //     req.flash('success_msg', "Product purchased successfully!");
-    //     res.redirect('/user/purchases');
-    // } else {
-    //     req.flash('error_msg', "Product not in stock");
-    //     res.redirect('/user/cart');
-    // }
+router.post('/purchases', async function(req, res) {
+    try {
+        var products = await Product.find();
+        var user = req.user;
+        for(let i = 0; user.cart.length > 0; i++) {
+            for(let j = 0; j < products.length; j++) {
+                if(products[j].id == user.cart[i].id) {
+                    let tempProduct = await Product.findById(products[j].id);
+                    tempProduct.itemQty = tempProduct.itemQty - user.cart[i].qty;
+                    if(tempProduct.itemQty < 0) {
+                        req.flash('error_msg', 'An item is currently not in stock. Kindly try again later.');
+                        res.redirect('/user/cart');
+                        continue;
+                    } else {
+                        let tempCart = user.cart[i];
+                        tempCart.eventDate = new Date().toLocaleDateString();
+                        user.purchases.push(tempCart);
+                        user.cart.splice(i, 1);
+                        let salesHistory = {
+                            itemQty: tempCart.qty,
+                            itemPrice: tempCart.price,
+                            eventDate: tempCart.eventDate,
+                            buyerName: req.user.name,
+                            buyerEmail: req.user.email
+                        }
+                        tempProduct.purchases.push(salesHistory);
+                        tempProduct = await tempProduct.save();
+                        user = await user.save();
+                        break;
+                    }
+                }
+            }
+            i--;
+        }
+        req.flash('success_msg', "Product purchased successfully!");
+        res.redirect('/user/purchases');
+    } 
+    catch (err) {
+        console.log(err);
+        req.flash('error_msg', 'Some error occurred. Please try later');
+        res.redirect('/user/cart');
+    }
+});
+
+//Seller route for sales history 
+router.get('/history', ensureAuthenticated, sellerAuthenticated, async function(req, res) {
+    const products = await Product.find({ email: req.user.email });
+    res.render('seller-history', {
+        name: req.user.name,
+        products: products
+    });
 });
 
 //Remove product

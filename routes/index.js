@@ -84,7 +84,6 @@ router.post('/signup', function(req, res) {
                                 .then(function(user) {
                                     req.flash('success_msg', 'Signup is successful and you can login!');
                                     res.redirect('/login');
-                                    console.log(newUser);
                                 })
                                 .catch(function(err) {
                                     console.log(err);

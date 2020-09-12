@@ -33,6 +33,9 @@ const ProductSchema = new mongoose.Schema({
         data: Buffer, 
 		contentType: String 
     },
+    purchases: {
+        type: Array
+    },
     createdDate: {
         type: Date,
         default: Date.now

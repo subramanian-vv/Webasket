@@ -14,7 +14,7 @@
             <h3 class="card-header text-center">
               <%= product.itemName %>
             </h3>
-              <div class="card-body" style="background-color: aliceblue;">
+              <div class="card-body" style="background-color: aliceblue; text-align: center;">
                 <div class="card-title mb-4"> 
                   <img src="data:image/<%= product.image.contentType %>;base64, 
 					                  <%= product.image.data.toString('base64') %>" width="200" height="200" alt="Image">   
@@ -35,9 +35,6 @@
                       />
                     <button type="submit" class="btn"> <i class="fa fa-shopping-cart" style="font-size:36px"></i> </button>
                 </form>
-              </div>
-              <div class="card-footer mb-2"> Created on : <strong> <%= product.createdDate.toLocaleDateString() %> </strong>
-                <div class="float-right"> Created by: <strong> <%= product.name %> </strong> </div>
               </div>
       
           </div>
