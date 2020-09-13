@@ -4,6 +4,7 @@ const multer = require('multer');
 
 var fs = require('fs'); 
 var path = require('path');
+const plotly = require('plotly')('koyilnet','yTgt3wf4sHhQNUHLMZ4K');
 
 const { ensureAuthenticated, sellerAuthenticated, buyerAuthenticated } = require('../config/auth');
 
@@ -217,6 +218,28 @@ router.post('/purchases', async function(req, res) {
 //Seller route for sales history 
 router.get('/history', ensureAuthenticated, sellerAuthenticated, async function(req, res) {
     const products = await Product.find({ email: req.user.email });
+    var graphItem = [];
+    var graphPrice = [];
+    products.forEach(function(product) {
+        let tempPrice = 0;
+        graphItem.push(product.itemName);
+        product.purchases.forEach(function(purchase) {
+            tempPrice += parseInt(purchase.itemQty);
+            console.log(tempPrice);
+        });
+        graphPrice.push(tempPrice);
+    });
+    var data = [
+        {
+          x: graphItem,
+          y: graphPrice,
+          type: "bar"
+        }
+      ];
+      var graphOptions = {filename: "basic-bar", fileopt: "overwrite"};
+      plotly.plot(data, graphOptions, function (err, msg) {
+          console.log(msg);
+      });
     res.render('seller-history', {
         name: req.user.name,
         products: products
