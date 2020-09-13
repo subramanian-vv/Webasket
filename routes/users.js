@@ -46,7 +46,7 @@ function checkFileType(file, callback, req, res) {
     }
 }
 
-//Temp dashboard
+//Buyer and Seller dashboard
 router.get('/dashboard', ensureAuthenticated, async function(req, res) {
     let products = await Product.find().sort({ createdDate: 'desc' });
     const role = req.user.role;
@@ -65,6 +65,7 @@ router.get('/dashboard', ensureAuthenticated, async function(req, res) {
     }
 });
 
+//Route to add products
 router.get('/add', ensureAuthenticated, sellerAuthenticated, function(req, res) {
     res.render('addproduct', { product: new Product() });
 });
@@ -103,20 +104,6 @@ router.post('/dashboard', upload.single('image'), function(req, res) {
     })
 });
 
-router.post('/remove/:id', async function(req, res) {
-    let product = await Product.findById(req.params.id);
-    let user = req.user;
-    for(let i = 0; i < user.cart.length; i++) {
-        if(user.cart[i].id == product.id) {
-            user.cart.splice(i, 1);
-            user = await user.save();
-            req.flash('success_msg', 'Product removed from the cart');
-            res.redirect('/user/dashboard');
-            break;
-        }
-    }
-});
-
 router.get('/cart', ensureAuthenticated, buyerAuthenticated, async function(req, res) {
     const products = await Product.find().sort({ createdDate: 'desc' });
     const totalItems = req.user.cart.length;
@@ -134,6 +121,7 @@ router.get('/cart', ensureAuthenticated, buyerAuthenticated, async function(req,
     });
 });
 
+//Route to add items to cart
 router.post('/cart/:id', async function(req, res) {
     const { quantity } = req.body;
     let product = await Product.findById(req.params.id);
@@ -172,6 +160,21 @@ router.post('/cart/:id', async function(req, res) {
     }
 });
 
+//Route to remove items from cart
+router.post('/remove/:id', async function(req, res) {
+    let product = await Product.findById(req.params.id);
+    let user = req.user;
+    for(let i = 0; i < user.cart.length; i++) {
+        if(user.cart[i].id == product.id) {
+            user.cart.splice(i, 1);
+            user = await user.save();
+            req.flash('success_msg', 'Product removed from the cart');
+            res.redirect('/user/dashboard');
+            break;
+        }
+    }
+});
+
 router.get('/purchases', ensureAuthenticated, buyerAuthenticated, function(req, res) {
     res.render('buyer-purchases', {
         name: req.user.name,
@@ -180,6 +183,7 @@ router.get('/purchases', ensureAuthenticated, buyerAuthenticated, function(req, 
     });
 });
 
+//Route to purchase from cart
 router.post('/purchases', async function(req, res) {
     try {
         var products = await Product.find();
@@ -275,7 +279,7 @@ router.delete('/:id', async function(req, res) {
 });
 
 //Edit product
-router.get('/edit/:id', async function(req, res) {
+router.get('/edit/:id', ensureAuthenticated, sellerAuthenticated, async function(req, res) {
     const product = await Product.findById(req.params.id);
     res.render('editproduct', {
         itemQty: req.body.itemQty,
@@ -304,6 +308,10 @@ router.put('/:id', async function(req, res) {
     }
 });
 
+router.get('/search', ensureAuthenticated, function(req, res) {
+    res.redirect('/user/dashboard');
+});
+
 //Case insensitive search using regular expression
 router.post('/search', async function(req, res) {
     const { search } = req.body;
@@ -323,6 +331,15 @@ router.post('/search', async function(req, res) {
             products: products
         });
     }
+});
+
+//Handling 404 errors
+router.get('*', ensureAuthenticated, function (req, res) { 
+    res.render('404', {
+        name: req.user.name,
+        role: req.user.role,
+        cart: req.user.cart
+    }); 
 });
 
 module.exports = router;
