@@ -1,9 +1,0 @@
-<%- include('./partials/messages.ejs'); %>
-
-<h1 class="mb-3 mt-4 text-center">Welcome to your feed, <%= name %> !</h1> <hr>
-<% if(role == 'buyer') { %>
-    <p> Buyer </p>
-<% } else if(role =='seller') { %>
-    <p> Seller </p>
-<% } %>
-<a href="/logout" class="btn btn-dark btn-lg"> Logout </a>

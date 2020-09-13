@@ -53,7 +53,8 @@ router.get('/dashboard', ensureAuthenticated, async function(req, res) {
     if(role == 'buyer') {
         res.render('buyer-dash', {
             name: req.user.name,
-            products: products
+            products: products,
+            cart: req.user.cart
         });
     } else if(role == 'seller') {
         products = await Product.find({ email: req.user.email }).sort({ createdDate: 'desc' });;
@@ -118,11 +119,18 @@ router.post('/remove/:id', async function(req, res) {
 
 router.get('/cart', ensureAuthenticated, buyerAuthenticated, async function(req, res) {
     const products = await Product.find().sort({ createdDate: 'desc' });
+    const totalItems = req.user.cart.length;
+    let totalPrice = 0;
+    req.user.cart.forEach(function(cartElement) {
+        totalPrice += parseFloat(cartElement.price);
+    });
     res.render('buyer-cart', {
         name: req.user.name,
         cart: req.user.cart,
         purchases: req.user.purchases,
-        products: products
+        products: products,
+        totalItems,
+        totalPrice
     });
 });
 
@@ -167,7 +175,8 @@ router.post('/cart/:id', async function(req, res) {
 router.get('/purchases', ensureAuthenticated, buyerAuthenticated, function(req, res) {
     res.render('buyer-purchases', {
         name: req.user.name,
-        purchases: req.user.purchases,
+        cart: req.user.cart,
+        purchases: req.user.purchases.sort().reverse()
     });
 });
 
@@ -220,29 +229,41 @@ router.get('/history', ensureAuthenticated, sellerAuthenticated, async function(
     const products = await Product.find({ email: req.user.email });
     var graphItem = [];
     var graphPrice = [];
+    var totalAmount = 0;
     products.forEach(function(product) {
-        let tempPrice = 0;
+        let tempQty = 0;
         graphItem.push(product.itemName);
         product.purchases.forEach(function(purchase) {
-            tempPrice += parseInt(purchase.itemQty);
-            console.log(tempPrice);
+            tempQty += parseInt(purchase.itemQty);
+            totalAmount += parseFloat(purchase.itemPrice);
         });
-        graphPrice.push(tempPrice);
+        graphPrice.push(tempQty);
     });
+    //Plotting statistics
     var data = [
         {
           x: graphItem,
           y: graphPrice,
-          type: "bar"
+          type: 'bar'
         }
-      ];
-      var graphOptions = {filename: "basic-bar", fileopt: "overwrite"};
-      plotly.plot(data, graphOptions, function (err, msg) {
-          console.log(msg);
-      });
+    ];
+    var layout = {
+        title: 'Product sales details',
+        xaxis: {
+            title: 'Product name'
+        },
+        yaxis: {
+            title: 'Quantity sold'
+        }
+    };
+    var graphOptions = {layout: layout, filename: 'basic-bar', fileopt: 'overwrite'};
+    plotly.plot(data, graphOptions, function (err, msg) {
+        console.log(msg);
+    });
     res.render('seller-history', {
         name: req.user.name,
-        products: products
+        products: products,
+        totalAmount
     });
 });
 
@@ -279,6 +300,27 @@ router.put('/:id', async function(req, res) {
             itemQty: req.body.itemQty,
             itemPrice: req.body.itemPrice,
             product: product
+        });
+    }
+});
+
+//Case insensitive search using regular expression
+router.post('/search', async function(req, res) {
+    const { search } = req.body;
+    const products = await Product.find({ itemName: new RegExp(search, 'i') });
+    if(req.user.role == 'buyer') {
+        res.render('buyer-search', {
+            name: req.user.name,
+            cart: req.user.cart,
+            search,
+            products: products
+        });
+    } else if(req.user.role == 'seller') {
+        res.render('seller-search', {
+            name: req.user.name,
+            cart: req.user.cart,
+            search,
+            products: products
         });
     }
 });

@@ -1,11 +1,10 @@
 <%- include('./partials/messages.ejs'); %>
 <%- include('./partials/buyer-nav.ejs'); %>
 
-<h1 class="mb-3 mt-4 text-center">Welcome to your feed, <%= name %> !</h1> <hr>
-    <p> Buyer </p>
+<h1 class="mb-3 mt-4 text-center">Welcome to your dashboard, <%= name %> !</h1> <hr>
 
     <% if(products.length == 0) { %>
-        <h4 class="mt-4 text-center"> Nothing to show in feed! </h4>
+        <h4 class="mt-4 text-center"> There are no products as of now! Please shop later. </h4>
       <% } %>
       
       <% products.forEach(function (product) { %>
@@ -14,16 +13,16 @@
             <h3 class="card-header text-center">
               <%= product.itemName %>
             </h3>
-              <div class="card-body" style="background-color: aliceblue; text-align: center;">
-                <div class="card-title mb-4"> 
+              <div class="card-body" style="background-color: aliceblue;">
+                <div class="card-title mb-4 float-right"> 
                   <img src="data:image/<%= product.image.contentType %>;base64, 
 					                  <%= product.image.data.toString('base64') %>" width="200" height="200" alt="Image">   
                 </div>
                 <div class="card-title mb-4"> Description: <strong> <%= product.itemDesc %> </strong> </div>
-                <div class="card-title mb-4"> Price: <strong> <%= product.itemPrice %> </strong> </div>
-                <div class="card-title mb-4"> Quantity: <strong> <%= product.itemQty %> </strong> </div>
+                <div class="card-title mb-4"> Price: <strong> ₹ <%= product.itemPrice %> </strong> </div>
+                <div class="card-title mb-4"> Available stock: <strong> <%= product.itemQty %> </strong> </div>
                 <div class="card-title mb-4"> Category: <strong> <%= product.itemCategory %> </strong> </div>
-                <hr>
+                <br> <hr>
                 <form action="/user/cart/<%= product.id %>" method="POST">
                     <input 
                       name="quantity"

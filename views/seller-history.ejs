@@ -1,55 +1,60 @@
 <%- include('./partials/messages.ejs'); %>
 <%- include('./partials/seller-nav.ejs'); %>
-<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
-<h1 class="mb-3 mt-4 text-center">Welcome to your feed, <%= name %> !</h1> <hr>
-    <p> Seller </p>
+
+<h1 class="mb-3 mt-4 text-center">Welcome to your sales history, <%= name %> !</h1> <hr>
 
     <% if(products.length == 0) { %>
-        <h4 class="mt-4 text-center"> Nothing to show in feed! </h4>
-      <% } %>
-      
-      <% products.forEach(function (product) { %>
-          <% if(product.purchases.length > 0) { %>
-            <div class="card  mt-4 border-dark">
-                <h3 class="card-header text-center">
-                <%= product.itemName %>
-                </h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover">
-                        <thead>
+        <h4 class="mt-4 text-center"> No products added yet! </h4>
+      <% } else { %>
+        <p class="mt-2 text-center"> Turnover: <strong> ₹ <%= totalAmount %> </strong> </p> 
+        <% products.forEach(function (product) { %>
+            <% if(product.purchases.length > 0) { %>
+                <div class="card  mt-4 border-dark">
+                    <h3 class="card-header text-center">
+                    <%= product.itemName %>
+                    </h3>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            </tr>
+                            </thead>
+                        
+                        <% product.purchases.forEach(function (purchase) { %>
                         <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Date</th>
+                            <td> <%= purchase.buyerName %> </td>
+                            <td> <%= purchase.buyerEmail %> </td>
+                            <td> <%= purchase.itemQty %> </td>
+                            <td> ₹ <%= purchase.itemPrice %> </td>
+                            <td> <%= purchase.eventDate %> </td>
                         </tr>
-                        </thead>
-                    
-                    <% product.purchases.forEach(function (purchase) { %>
-                    <tr>
-                        <td> <%= purchase.buyerName %> </td>
-                        <td> <%= purchase.buyerEmail %> </td>
-                        <td> <%= purchase.itemQty %> </td>
-                        <td> <%= purchase.itemPrice %> </td>
-                        <td> <%= purchase.eventDate %> </td>
-                    </tr>
-                    <% }) %>
-                    </table>
+                        <% }) %>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        <% } else { %>
-            <div class="card  mt-4 border-dark">
-                <h3 class="card-header text-center">
-                <%= product.itemName %>
-                </h3>
-                <div class="card-body" style="background-color: aliceblue; text-align: center;">
-                    <div class="card-title mb-2"> <strong> No purchases yet. </strong> </div>
+            <% } else { %>
+                <div class="card  mt-4 border-dark">
+                    <h3 class="card-header text-center">
+                    <%= product.itemName %>
+                    </h3>
+                    <div class="card-body" style="background-color: aliceblue; text-align: center;">
+                        <div class="card-title mb-2"> <strong> No purchases yet. </strong> </div>
+                    </div>
                 </div>
-            </div>
-        <% } %>
-    <% }) %>
-<div>
-    <a href="https://plotly.com/~koyilnet/0/?share_key=h0jcNuccQ6LI7vjDchCjXA" target="_blank" title="basic-bar" style="display: block; text-align: center;"><img src="https://plotly.com/~koyilnet/0.png?share_key=h0jcNuccQ6LI7vjDchCjXA" alt="basic-bar" style="max-width: 100%;width: 600px;"  width="600" onerror="this.onerror=null;this.src='https://plotly.com/404.png';" /></a>
-    <script data-plotly="koyilnet:0" sharekey-plotly="h0jcNuccQ6LI7vjDchCjXA" src="https://plotly.com/embed.js" async></script>
-</div>
+            <% } %>
+        <% }) %>
+        <hr>
+        <div id="alert">
+            <h3 class="text-center"> Sales statistics </h3>
+            <p class="text-center mt-4"> If the graph doesn't load, please reload the page. </p>
+        </div>
+        <div style="display: block; text-align: center;">
+            <img src="https://plotly.com/~koyilnet/0.png?share_key=h0jcNuccQ6LI7vjDchCjXA" alt="Graph is not available" style="max-width: 100%;width: 1000px;"  width="1000" draggable="false" onerror="this.onerror=null;this.src='https://plotly.com/404.png';" />
+            <script data-plotly="koyilnet:0" sharekey-plotly="h0jcNuccQ6LI7vjDchCjXA" src="https://plotly.com/embed.js" async></script>
+        </div>
+    <% } %>

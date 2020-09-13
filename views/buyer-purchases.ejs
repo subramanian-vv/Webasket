@@ -1,31 +1,25 @@
 <%- include('./partials/messages.ejs'); %>
 <%- include('./partials/buyer-nav.ejs'); %>
 
-<h1 class="mb-3 mt-4 text-center">Welcome to your feed, <%= name %> !</h1> <hr>
-    <p> Buyer </p>
+<h1 class="mb-3 mt-4 text-center">Welcome to your purchases, <%= name %> !</h1> <hr>
 
     <% if(purchases.length == 0) { %>
-        <h4 class="mt-4 text-center"> Nothing to show in feed! </h4>
+        <h4 class="mt-4 text-center"> No purchases made yet! </h4>
       <% } %>
       
       <% purchases.forEach(function (purchase) { %>
-        
-          <div class="card  mt-4 border-dark">
+        <div class="card  mt-4 border-dark">
             <h3 class="card-header text-center">
               <%= purchase.name %>
             </h3>
-              <div class="card-body" style="background-color: aliceblue;">
+              <div class="card-body" style="background-color: aliceblue; text-align: center;">
                 <div class="card-title mb-4"> Quantity: <strong> <%= purchase.qty %> </strong> </div>
-                <div class="card-title mb-4"> Price: <strong> <%= purchase.price %> </strong> </div>
+                <div class="card-title mb-4"> Amount paid: <strong> ₹ <%= purchase.price %> </strong> </div>
                 <div class="card-title mb-4"> Category: <strong> <%= purchase.category %> </strong> </div>
-                <hr>
               </div>
-              <div class="card-footer mb-2"> 
+              <div class="card-footer mb-2 text-center"> 
                 Purchased on : <strong> <%= purchase.eventDate %> </strong>
               </div>
           </div>
-      
-          
-         
       
       <% }) %>

@@ -1,0 +1,37 @@
+<%- include('./partials/messages.ejs'); %>
+<%- include('./partials/seller-nav.ejs'); %>
+
+<h3 class="mb-3 mt-4 text-center"> Search results for: <%= search %> </h3> <hr>
+
+<% if(products.length == 0) { %>
+    <h4 class="mt-4 text-center"> No results found! </h4>
+  <% } %>
+  
+  <% products.forEach(function (product) { %>
+    <% if(product.name == name) { %>
+      <div class="card mt-4 border-dark">
+        <h3 class="card-header text-center">
+          <%= product.itemName %>
+        </h3>
+          <div class="card-body" style="background-color: aliceblue;">
+            <div class="card-title mb-4 float-right"> 
+              <img src="data:image/<%= product.image.contentType %>;base64, 
+                                  <%= product.image.data.toString('base64') %>" width="200" height="200" alt="Image">   
+            </div>
+            <div class="card-title mb-4"> Description: <strong> <%= product.itemDesc %> </strong> </div>
+            <div class="card-title mb-4"> Price: <strong> ₹ <%= product.itemPrice %> </strong> </div>
+            <div class="card-title mb-4"> Available stock: <strong> <%= product.itemQty %> </strong> </div>
+            <div class="card-title mb-4"> Category: <strong> <%= product.itemCategory %> </strong> </div>
+            <br> <hr>
+            <a href="/user/edit/<%= product.id %>" class="btn btn-info btn-lg mr-2">Edit</a>
+                <form action="/user/<%= product.id %>?_method=DELETE" method="POST" class="d-inline">
+                  <button type="submit" class="btn btn-danger btn-lg">Delete</button>
+                </form>
+              </div>
+              <div class="card-footer mb-2"> Added on : <strong> <%= product.createdDate.toLocaleDateString() %> </strong>
+                <div class="float-right"> Added by: <strong> You </strong> </div>
+              </div>
+      </div>
+    <% } %>
+  <% }) %>
+
