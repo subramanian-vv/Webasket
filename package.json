@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/subramanian-vv/Spider-Task-3.git"
+    "url": "git+https://github.com/subramanian-vv/Webasket.git"
   },
   "keywords": [],
   "author": "Subramanian V V",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/subramanian-vv/Spider-Task-3/issues"
+    "url": "https://github.com/subramanian-vv/Webasket/issues"
   },
-  "homepage": "https://github.com/subramanian-vv/Spider-Task-3#readme",
+  "homepage": "https://github.com/subramanian-vv/Webasket#readme",
   "dependencies": {
     "bcrypt": "^5.0.0",
     "ejs": "^3.1.5",
