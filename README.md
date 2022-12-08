@@ -1,5 +1,5 @@
 # Webasket
-A shopping cart with buyer and seller handles, created using NodeJS, ExpressJS and MongoDB. The site is hosted **[here](https://webasket.herokuapp.com/).**
+A shopping cart with buyer and seller handles, created using NodeJS, ExpressJS and MongoDB.
 
 ### Basic Mode:
 ##### User Profile: 
